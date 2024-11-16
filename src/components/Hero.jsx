@@ -6,44 +6,40 @@ import Image from "next/image";
 import { useState } from "react";
 
 function useCharacterAnimation() {
-  //Window size related:
-  //
-  const [mouseMove, setMouseMove] = useState(false);
-  //1. Initialization.
+  //State:
+  //1. Initialization of window dimensions, mouse coordinates, and mouse movement
   const [windowOffset, setWindowOffset] = useState({
     innerHeight: 0,
     innerWidth: 0,
   });
-  //Adjust dimensions of the window on mouse enter.
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [mouseMove, setMouseMove] = useState(false);
+
+  //Handlers:
+  //1. onMouseEnter: alert movement and adjust dimensions
+  //2. onMouseMove: Performance by mutation of motion values x and y, with clientX and clientY (destructured from event)
   const handleMouseEnter = () => {
-    //provides the dimensions of the window
-    //We use the valuues to calculate the measures
     setWindowOffset({
       innerHeight: window.innerHeight,
       innerWidth: window.innerWidth,
     });
-    //The mouuse enters the hero section.
     setMouseMove(true);
   };
-
-  //Mouse related:
-  //1. Detect movement and coordinate initialization
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
   const handleMouseMove = (e) => {
-    //Performant state mutations (useMotionValue)
     const { clientX, clientY } = e;
     x.set(clientX);
     y.set(clientY);
   };
 
-  const { innerHeight, innerWidth } = windowOffset;
+  //Dataflow:
+  //1. prepare springs instead of mutated linear values. (optional)
+  //2. use window dimensions (state) to map the spring values. These are the final style calculations
 
   const xSpring = useSpring(x, { stiffness: 100, damping: 10 });
   const ySpring = useSpring(y, { stiffness: 100, damping: 10 });
 
-  //not Linear, but springy transformation from mouse position to rotation angle.
+  const { innerHeight, innerWidth } = windowOffset;
   const rotateY = useTransform(xSpring, [0, innerWidth], [-30, 30]);
   const rotateX = useTransform(ySpring, [0, innerHeight], [10, -50]);
 

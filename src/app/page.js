@@ -1,6 +1,11 @@
+"use client"
+
+import Hero from "@/components/Hero"
 
 export default function Home() {
   return (
-    <div>Home</div>
+    <div>
+      <Hero />
+    </div>
   )
 }

@@ -4,8 +4,8 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
 import Heading from "./sub/Heading";
-export default function Experience() {
-  const date = new Date().getFullYear();
+
+function useTimelineAnimation() {
   const containerRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -19,7 +19,11 @@ export default function Experience() {
     stiffness: 200,
     damping: 20,
   });
-
+  return { containerRef, scrollY };
+}
+export default function Experience() {
+  const date = new Date().getFullYear();
+  const { containerRef, scrollY } = useTimelineAnimation();
   return (
     <div className="relative py-20 px-96">
       <Heading text="Experience & Education" />
@@ -76,7 +80,7 @@ export default function Experience() {
                   }`}
                 >
                   {arrowLeftIcon}
-                </span>
+                </span>
               </motion.div>
               <div
                 className={`absolute top-20 w-14  border border-gray-300 rounded-full aspect-square grid place-items-center texxt-red-400 font-light -translate-y-1/2 z-10 bg-white ${
